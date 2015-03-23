@@ -6,7 +6,7 @@ main: com.fernandobarillas.mchorse.McHorse
 commands:
   horse:
     description: Starts horse session
-    usage: /<command> [option] [player]
+    usage: /<command> [add, remove, start, stop, score, players] [player]
     permission: mchorse.add
     permission-message: You don't have permission to add player <permission>
   h:
