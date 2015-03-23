@@ -1,5 +1,6 @@
 package com.fernandobarillas.mchorse;
 
+import com.fernandobarillas.mchorse.executors.McHorseCommandExecutor;
 import com.fernandobarillas.mchorse.listeners.McHorsePlayerListener;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;

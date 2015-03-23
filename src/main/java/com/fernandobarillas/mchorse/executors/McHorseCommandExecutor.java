@@ -1,5 +1,6 @@
-package com.fernandobarillas.mchorse;
+package com.fernandobarillas.mchorse.executors;
 
+import com.fernandobarillas.mchorse.Constants;
 import com.fernandobarillas.mchorse.helpers.MessageHelper;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
