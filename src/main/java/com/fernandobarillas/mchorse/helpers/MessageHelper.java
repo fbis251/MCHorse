@@ -12,10 +12,6 @@ import java.util.HashMap;
  */
 public class MessageHelper {
 
-    public static void pluginMessage(Player targetPlayer, String message) {
-        targetPlayer.sendMessage(Constants.MESSAGE_PREFIX + message);
-    }
-
     public static void broadcastMessage(Plugin plugin, String message) {
 
         if (!(plugin instanceof McHorse)) {
@@ -28,5 +24,9 @@ public class MessageHelper {
         for (Player player : playerHashMap.values()) {
             pluginMessage(player, message);
         }
+    }
+
+    public static void pluginMessage(Player targetPlayer, String message) {
+        targetPlayer.sendMessage(Constants.MESSAGE_PREFIX + message);
     }
 }

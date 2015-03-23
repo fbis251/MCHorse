@@ -40,6 +40,16 @@ public class McHorsePlayerListener implements Listener {
     // TODO: Extinguish arrows that hit the target block
 
     /**
+     * Handles a player shooting an arrow with a bow to keep track of arrow Entity IDs to keep score with
+     */
+    @EventHandler
+    public void onEntityShootBowEvent(EntityShootBowEvent event) {
+        Arrow arrow = (Arrow) event.getProjectile();
+        // TODO: Track the last arrow per player
+        mLastShotArrowId = arrow.getEntityId();
+    }
+
+    /**
      * Allows a player to right click a block while holding an arrow in their hands to set the target block
      */
     @EventHandler
@@ -51,16 +61,6 @@ public class McHorsePlayerListener implements Listener {
             Block targetBlock = event.getClickedBlock();
             setTargetBlock(targetBlock, player);
         }
-    }
-
-    /**
-     * Handles a player shooting an arrow with a bow to keep track of arrow Entity IDs to keep score with
-     */
-    @EventHandler
-    public void onEntityShootBowEvent(EntityShootBowEvent event) {
-        Arrow arrow = (Arrow) event.getProjectile();
-        // TODO: Track the last arrow per player
-        mLastShotArrowId = arrow.getEntityId();
     }
 
     /**
@@ -135,7 +135,7 @@ public class McHorsePlayerListener implements Listener {
             mTargetBlock = null;
             message = player.getName() + " unset the target block";
         }
-        if(message != null) {
+        if (message != null) {
             MessageHelper.broadcastMessage(mPlugin, message);
         }
     }
