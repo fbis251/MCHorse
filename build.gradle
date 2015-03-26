@@ -1,7 +1,7 @@
 apply plugin: 'java'
 import org.apache.tools.ant.filters.ReplaceTokens
 
-version = '0.3'
+version = '0.4'
 sourceCompatibility = 1.8
 
 // Make sure the plugin yml files are up to date before a JAR is created
