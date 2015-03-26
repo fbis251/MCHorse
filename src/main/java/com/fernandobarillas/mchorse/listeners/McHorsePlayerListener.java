@@ -1,7 +1,9 @@
 package com.fernandobarillas.mchorse.listeners;
 
 import com.fernandobarillas.mchorse.Constants;
+import com.fernandobarillas.mchorse.McHorse;
 import com.fernandobarillas.mchorse.helpers.MessageHelper;
+
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -13,7 +15,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.BlockIterator;
 
@@ -22,7 +23,7 @@ import org.bukkit.util.BlockIterator;
  */
 public class McHorsePlayerListener implements Listener {
 
-    private Plugin mPlugin;
+    private McHorse mPlugin;
 
     private int mLastShotArrowId;
 
@@ -30,7 +31,7 @@ public class McHorsePlayerListener implements Listener {
 
     private Material mOriginalMaterial;
 
-    public McHorsePlayerListener(Plugin plugin) {
+    public McHorsePlayerListener(McHorse plugin) {
         mPlugin = plugin;
     }
 
@@ -158,8 +159,14 @@ public class McHorsePlayerListener implements Listener {
             return;
         }
 
+        // Make sure that the player who shot the arrow did so in their turn
+        if (!mPlugin.getPlayerQueue().validateTurn(player)) {
+            return;
+        }
+
         World world = arrow.getWorld();
-        BlockIterator iterator = new BlockIterator(world, arrow.getLocation().toVector(), arrow.getVelocity().normalize(), 0, 4);
+        BlockIterator iterator = new BlockIterator(world, arrow.getLocation().toVector(),
+                arrow.getVelocity().normalize(), 0, 4);
         Block hitBlock;
         while (iterator.hasNext()) {
             hitBlock = iterator.next();
@@ -167,12 +174,21 @@ public class McHorsePlayerListener implements Listener {
             // We only want to check blocks that don't contain air to score a hit
             if (hitBlock.getType() != Material.AIR) {
                 if (hitBlock.getLocation().equals(mTargetBlock.getLocation())) {
-                    MessageHelper.pluginMessage(player, "You hit the target block!");
+                    // TODO: Add broadcastMessage method to MessageHelper that will automatically use only the player queue
+                    String message = player.getName() + " hit the target";
+                    MessageHelper.broadcastMessage(mPlugin, message);
+                    String scoreString = mPlugin.getPlayerQueue().getPlayerScoreString(player);
+                    if (!scoreString.isEmpty()) {
+                        MessageHelper.pluginMessage(player, scoreString);
+                    }
                     setArrowName(arrow, player.getName(), true);
                     arrow.setFireTicks(0); // Extinguish arrow in 0 ticks
                     mLastShotArrowId = -1;
                 } else {
-                    MessageHelper.pluginMessage(player, "You missed the target block");
+                    mPlugin.getPlayerQueue().incrementScore(player);
+                    String message = player.getName() + " missed the target";
+                    MessageHelper.broadcastMessage(mPlugin, message);
+                    MessageHelper.broadcastMessage(mPlugin, mPlugin.getPlayerQueue().getPlayerScoreString(player));
                     setArrowName(arrow, player.getName(), false);
                 }
                 break;
