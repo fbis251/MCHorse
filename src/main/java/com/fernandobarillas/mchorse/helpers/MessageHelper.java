@@ -2,31 +2,47 @@ package com.fernandobarillas.mchorse.helpers;
 
 import com.fernandobarillas.mchorse.Constants;
 import com.fernandobarillas.mchorse.McHorse;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 /**
+ * A class to easily send messages to players currently playing a game of Horse
+ *
  * Created by FB on 3/20/2015.
  */
 public class MessageHelper {
 
-    public static void broadcastMessage(Plugin plugin, String message) {
+    /**
+     * Sends a message to all players currently playing a game of Horse
+     *
+     * @param plugin  The instance of the plugin to use to check for online players to send the message to.
+     * @param message The message to send to the players.
+     */
+    public static void broadcastMessage(McHorse plugin, String message) {
+        McHorse mcHorsePlugin = plugin;
+        ArrayList<HorsePlayer> playerQueue = plugin.getPlayerQueue().getQueuedPlayers();
 
-        if (!(plugin instanceof McHorse)) {
-            return;
-        }
-
-        McHorse mcHorsePlugin = (McHorse) plugin;
-        HashMap<String, Player> playerHashMap = mcHorsePlugin.getOnlinePlayers();
-
-        for (Player player : playerHashMap.values()) {
-            pluginMessage(player, message);
+        for (HorsePlayer horsePlayer : playerQueue) {
+            Player player = plugin.getServer().getPlayer(horsePlayer.getUniqueId());
+            if (player != null && player.isOnline()) {
+                pluginMessage(player, message);
+            }
         }
     }
 
+    /**
+     * Sends a message to a single player playing a game of Horse
+     *
+     * @param targetPlayer The player to send the message to
+     * @param message      The message to send to the player
+     */
     public static void pluginMessage(Player targetPlayer, String message) {
+        if (targetPlayer == null || !targetPlayer.isOnline()) {
+            return;
+        }
+
         targetPlayer.sendMessage(Constants.MESSAGE_PREFIX + message);
     }
 }
