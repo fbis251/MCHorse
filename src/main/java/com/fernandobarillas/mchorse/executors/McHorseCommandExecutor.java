@@ -1,20 +1,23 @@
 package com.fernandobarillas.mchorse.executors;
 
 import com.fernandobarillas.mchorse.Constants;
+import com.fernandobarillas.mchorse.McHorse;
 import com.fernandobarillas.mchorse.helpers.MessageHelper;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 public class McHorseCommandExecutor implements CommandExecutor {
 
     private final static String PLUGIN_COMMAND_LONG_NAME = "horse";
-    private final static String PLUGIN_COMMAND_SHORT_NAME = "h";
-    private final Plugin mPlugin;
 
-    public McHorseCommandExecutor(Plugin plugin) {
+    private final static String PLUGIN_COMMAND_SHORT_NAME = "h";
+
+    private final McHorse mPlugin;
+
+    public McHorseCommandExecutor(McHorse plugin) {
         mPlugin = plugin;
     }
 
@@ -31,7 +34,8 @@ public class McHorseCommandExecutor implements CommandExecutor {
         Player player = (Player) sender;
         String commandName = command.getName();
 
-        if (commandName.equalsIgnoreCase(PLUGIN_COMMAND_LONG_NAME) || commandName.equalsIgnoreCase(PLUGIN_COMMAND_SHORT_NAME)) {
+        if (commandName.equalsIgnoreCase(PLUGIN_COMMAND_LONG_NAME) || commandName
+                .equalsIgnoreCase(PLUGIN_COMMAND_SHORT_NAME)) {
             if (arguments.length < 1) {
                 MessageHelper.pluginMessage(player, "Not enough arguments");
                 return false;
@@ -52,16 +56,32 @@ public class McHorseCommandExecutor implements CommandExecutor {
 
             // Handle the plugin command arguments here to allow players to add, remove, etc. themselves from the queue
             // TODO: Add, remove, start, stop, score, players
+            // TODO: Teleport to source block option?
             switch (commandArgument) {
                 case "a":
                 case "add":
-                    MessageHelper.pluginMessage(player, "Adding yourself to the queue");
+                    mPlugin.getPlayerQueue().addPlayer(player);
+                    MessageHelper.pluginMessage(player, "Added yourself to the queue");
+                    MessageHelper.pluginMessage(player, mPlugin.getPlayerQueue().toString());
                     // TODO: Send an error message to the player if they're already in a queue
                     return true;
                 case "r":
                 case "remove":
-                    MessageHelper.pluginMessage(player, "Removing yourself from the queue");
+                    mPlugin.getPlayerQueue().removePlayer(player);
+                    MessageHelper.pluginMessage(player, "Removed yourself from the queue");
+                    MessageHelper.pluginMessage(player, mPlugin.getPlayerQueue().toString());
                     // TODO: Send an error message to the player if they're not in the queue
+                    return true;
+                case "start":
+                    break;
+                case "stop":
+                    break;
+                case "p":
+                case "players":
+                case "s":
+                case "scores":
+                    MessageHelper.pluginMessage(player, "Player count: " + mPlugin.getPlayerQueue().getPlayerCount());
+                    MessageHelper.pluginMessage(player, mPlugin.getPlayerQueue().getScoreStrings());
                     return true;
                 default:
                     return false;
