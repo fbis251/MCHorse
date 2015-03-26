@@ -1,6 +1,7 @@
 package com.fernandobarillas.mchorse;
 
 import com.fernandobarillas.mchorse.executors.McHorseCommandExecutor;
+import com.fernandobarillas.mchorse.helpers.PlayerQueue;
 import com.fernandobarillas.mchorse.listeners.McHorsePlayerListener;
 
 import org.bukkit.entity.Player;
@@ -10,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 
 public class McHorse extends JavaPlugin {
+
+    private PlayerQueue mPlayerQueue;
 
     private HashMap<String, Player> mPlayerMap;
 
@@ -36,6 +39,10 @@ public class McHorse extends JavaPlugin {
             mHorseWord = horseWord;
         }
     }
+
+    /**
+     * Gets the currently online players.
+     */
     public HashMap<String, Player> getOnlinePlayers() {
         mPlayerMap = new HashMap<String, Player>();
 
@@ -46,19 +53,23 @@ public class McHorse extends JavaPlugin {
         return mPlayerMap;
     }
 
+    /**
+     * Gets the players currently added to the plugin's game queue. Players added to this queue
+     */
+    public PlayerQueue getPlayerQueue() {
+        return mPlayerQueue;
+    }
+
     @Override
     public void onDisable() {
         mPlayerMap = null;
+        mPlayerQueue = null;
     }
 
     @Override
     public void onEnable() {
-        getOnlinePlayers();
-        getLogger().info("Online Players:");
-        for (Player player : mPlayerMap.values()) {
-            getLogger().info(player.getName());
-        }
         mHorseWord = Constants.HORSE_WORD;
+        mPlayerQueue = new PlayerQueue(this);
 
         getCommand("horse").setExecutor(new McHorseCommandExecutor(this));
         getCommand("h").setExecutor(new McHorseCommandExecutor(this));
