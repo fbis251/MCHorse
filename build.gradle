@@ -1,0 +1,35 @@
+apply plugin: 'java'
+import org.apache.tools.ant.filters.ReplaceTokens
+
+version = '0.3'
+sourceCompatibility = 1.8
+
+// Make sure the plugin yml files are up to date before a JAR is created
+task copyTask << {
+    copy {
+        from 'config.yml.template'
+        from 'plugin.yml.template'
+
+        // Set the latest version in plugin.yml
+        filter(ReplaceTokens, tokens: [VERSION: version])
+        rename { String fileName ->
+            fileName.replace('.template', '')
+        }
+
+        into 'src/main/resources'
+    }
+}
+
+repositories {
+    maven {
+        url "https://hub.spigotmc.org/nexus/content/groups/public/"
+    }
+}
+
+// Make sure that the template files have the proper version added to them
+processResources.dependsOn copyTask
+
+dependencies {
+    compile 'org.bukkit:bukkit:1.8.3-R0.1-SNAPSHOT'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

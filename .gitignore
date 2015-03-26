@@ -10,3 +10,8 @@ hs_err_pid*
 # Generated files
 target/
 .idea
+.gradle
+gradle/
+gradlew*
+build/
+src/main/resources/

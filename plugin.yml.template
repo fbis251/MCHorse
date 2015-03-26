@@ -1,5 +1,5 @@
 name: Horse
-version: 0.3
+version: @VERSION@
 description: Play Horse in Minecraft
 author: Fernando Barillas @fbis251
 main: com.fernandobarillas.mchorse.McHorse
